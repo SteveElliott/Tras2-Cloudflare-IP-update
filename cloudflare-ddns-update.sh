@@ -23,6 +23,13 @@ ip=$(curl -s -X GET https://checkip.amazonaws.com)
 
 echo "Current IP is $ip"
 
+if host $dnsrecord 1.1.1.1 | grep "has address" | grep "$ip"; then
+  echo "$dnsrecord is currently set to $ip; no changes needed"
+  exit
+fi
+
+# if here, the dns record needs updating
+
 # get the zone id for the requested zone
 zoneid=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones?name=$zone&status=active" \
   -H "X-Auth-Email: $cloudflare_auth_email" \
